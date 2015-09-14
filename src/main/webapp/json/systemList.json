@@ -1,0 +1,8 @@
+{"entitys":[{"pgm_syscd":"F001","pgm_sysicon":"grid","pgm_sysnm":"거래처관리"},
+            {"pgm_syscd":"F002","pgm_sysicon":"grid","pgm_sysnm":"영업일지"},
+            {"pgm_syscd":"F003","pgm_sysicon":"grid","pgm_sysnm":"서류관리"},
+            {"pgm_syscd":"F004","pgm_sysicon":"grid","pgm_sysnm":"통보서관리"},
+            {"pgm_syscd":"F005","pgm_sysicon":"grid","pgm_sysnm":"현황관리"},
+            {"pgm_syscd":"F007","pgm_sysicon":"grid","pgm_sysnm":"실적관리"},
+            {"pgm_syscd":"S002","pgm_sysicon":"grid","pgm_sysnm":"패키지관리"}],
+            "errMsg":"","errTitle":"검색결과","message":"","success":true,"totalCount":"8"}

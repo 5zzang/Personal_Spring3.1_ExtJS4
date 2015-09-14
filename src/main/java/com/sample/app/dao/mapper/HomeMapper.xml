@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sample.app.dao.mapper.HomeMapper">
+	<!-- RESULT MAP -->
+	<resultMap type="com.sample.app.domain.UserInfoDomain" id="RM_USERINFO">
+		<result property="index" column="IDX"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="password" column="PASSWORD"/>
+		<result property="userName" column="USER_NAME"/>
+		<result property="email" column="EMAIL"/>
+		<result property="status" column="STATUS"/>
+		<result property="regDate" column="REG_DATE"/>
+	</resultMap>
+	
+	
+	<!-- SQL -->
+	<sql id="SQL_USERINFO_ALL">
+		IDX
+		, USER_ID
+		, USER_ID_CRC
+		, PASSWORD
+		, USER_NAME
+		, USER_NAME_CRC
+		, EMAIL
+		, EMAIL_CRC
+		, STATUS
+		, REG_DATE
+	</sql>
+	
+	
+	<!-- SELECT -->
+	<select id="selectUserInfoByUserId" resultMap="RM_USERINFO" parameterType="com.sample.app.domain.UserInfoDomain">
+		SELECT
+			IDX
+			, USER_ID
+			, PASSWORD
+			, USER_NAME
+			, EMAIL
+			, STATUS
+			, REG_DATE
+		FROM MT_USERINFO
+		WHERE USER_ID_CRC = CRC32(#{userId})
+	</select>
+	<select id="selectUserInfoByUserName" resultMap="RM_USERINFO" parameterType="com.sample.app.domain.UserInfoDomain">
+		SELECT
+			IDX
+			, USER_ID
+			, PASSWORD
+			, USER_NAME
+			, EMAIL
+			, STATUS
+			, REG_DATE
+		FROM MT_USERINFO
+		WHERE USER_NAME_CRC = CRC32(#{userName})
+	</select>
+	<select id="selectUserInfoByEmail" resultMap="RM_USERINFO" parameterType="com.sample.app.domain.UserInfoDomain">
+		SELECT
+			IDX
+			, USER_ID
+			, PASSWORD
+			, USER_NAME
+			, EMAIL
+			, STATUS
+			, REG_DATE
+		FROM MT_USERINFO
+		WHERE EMAIL_CRC = CRC32(#{email})
+	</select>
+	
+	
+	<!-- INSERT -->
+	<insert id="insertUserInfo" parameterType="com.sample.app.domain.UserInfoDomain">
+		INSERT INTO MT_USERINFO (
+			<include refid="SQL_USERINFO_ALL"/>
+		) VALUES (
+			null
+			, #{userId}
+			, CRC32(#{userId})
+			, #{password}
+			, #{userName}
+			, CRC32(#{userName})
+			, #{email}
+			, CRC32(#{email})
+			, #{status}
+			, UNIX_TIMESTAMP(NOW())
+		)
+	</insert>
+	
+	
+	<!-- UPDATE -->
+	
+	
+	<!-- DELETE -->
+</mapper>

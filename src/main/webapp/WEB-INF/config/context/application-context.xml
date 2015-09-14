@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<context:component-scan base-package="com.sample.app" />
+	<mvc:annotation-driven />
+	<task:annotation-driven />
+	<aop:aspectj-autoproxy />
+	
+	<!-- Resources에 대한 처리 -->
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+	
+	<!-- Request Interceptor 정의 -->
+	<bean id="requestSession" class="com.sample.app.common.RequestSession" scope="session">
+		<aop:scoped-proxy />
+	</bean>
+	<mvc:interceptors>
+		<!-- requestInterceptor -->
+		<bean id="requestInterceptor" class="com.sample.app.common.RequestInterceptor">
+			<property name="requestSession" ref="requestSession" />
+		</bean>
+	</mvc:interceptors>
+	
+	<!-- AOP -->
+	<bean id="selectAdvice" class="com.sample.app.common.aop.SelectAdvice" />
+	<bean id="insertAdvice" class="com.sample.app.common.aop.InsertAdvice" />
+	<bean id="updateAdvice" class="com.sample.app.common.aop.UpdateAdvice" />
+	<bean id="deleteAdvice" class="com.sample.app.common.aop.DeleteAdvice" />
+	<aop:config>
+		<aop:advisor advice-ref="selectAdvice" pointcut="execution(* com.sample.app..*Dao.select*(..))"/>
+		<aop:advisor advice-ref="insertAdvice" pointcut="execution(* com.sample.app..*Dao.insert*(..))"/>
+		<aop:advisor advice-ref="updateAdvice" pointcut="execution(* com.sample.app..*Dao.update*(..))"/>
+		<aop:advisor advice-ref="deleteAdvice" pointcut="execution(* com.sample.app..*Dao.delete*(..))"/>
+	</aop:config>
+	
+	<!-- JSP View Resolver 정의 -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	
+	<!-- JSR-303 Validator -->
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="com.sample.app.common.MessageException">exception</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- ResponseBody에서 한글이 안깨지도록.. -->
+	<bean  class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" >
+		<property name="messageConverters">
+	    	<list>
+	        	<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+	            	<property name="supportedMediaTypes">
+	               		<list>
+	                  		<value>text/plain;charset=UTF-8</value>
+	               		</list>
+	            	</property>
+	         	</bean>
+	   		</list>
+		</property>
+	</bean>
+	
+	<!-- 파일업로드를 위한 설정 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize">
+			<value>5000000</value>
+		</property>
+	</bean>
+
+	<!-- 프로퍼티 외부 설정 파일 정의 -->
+	<context:property-placeholder location="/WEB-INF/config/properties/*.properties"/>
+	
+	<!-- 추가 IMPORT 정의 -->
+	<import resource="mybatis-context.xml"/>
+	<import resource="message-context.xml"/>
+</beans>

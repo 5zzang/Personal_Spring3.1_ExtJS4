@@ -1,0 +1,8 @@
+{"entitys":[{"pgm_class":"ria.view.pgms.RiaAppMain01","pgm_icon":"grid","pgm_nm":"하위 프로그램1"},
+            {"pgm_class":"ria.view.pgms.RiaAppMain02","pgm_icon":"grid","pgm_nm":"하위 프로그램2"},
+            {"pgm_class":"ria.view.pgms.RiaAppMain03","pgm_icon":"grid","pgm_nm":"하위 프로그램3"},
+            {"pgm_class":"ria.view.pgms.RiaAppMain04","pgm_icon":"grid","pgm_nm":"하위 프로그램4"},
+            {"pgm_class":"ria.view.pgms.RiaAppMain05","pgm_icon":"grid","pgm_nm":"하위 프로그램5"},
+            {"pgm_class":"ria.view.pgms.RiaAppMain06","pgm_icon":"grid","pgm_nm":"하위 프로그램6"}
+            ],
+            "errMsg":"","errTitle":"검색결과","message":"","success":true,"totalCount":"2"}

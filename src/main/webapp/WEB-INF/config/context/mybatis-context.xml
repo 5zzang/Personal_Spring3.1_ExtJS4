@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<bean id="dataSourceMaster" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="${jdbc.main.master.url}" />
+		<property name="username" value="${jdbc.main.master.user}" />
+		<property name="password" value="${jdbc.main.master.password}" />
+		<property name="initialSize" value="${jdbc.main.master.initialSize}" />
+		<property name="maxActive" value="${jdbc.main.master.maxActive}" />
+		<property name="maxIdle" value="${jdbc.main.master.maxIdle}" />
+
+		<property name="maxWait" value="${jdbc.global.maxWait}" />
+		<property name="validationQuery" value="${jdbc.global.validationQuery}" />
+		<property name="timeBetweenEvictionRunsMillis" value="${jdbc.global.timeBetweenEvictionRunsMillis}" />
+		
+		<property name="testOnBorrow" value="true" />
+		<property name="testOnReturn" value="false" />
+		<property name="testWhileIdle" value="true" />
+	</bean>
+	<bean id="dataSourceSlave" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="${jdbc.main.slave.url}" />
+		<property name="username" value="${jdbc.main.slave.user}" />
+		<property name="password" value="${jdbc.main.slave.password}" />
+		<property name="initialSize" value="${jdbc.main.slave.initialSize}" />
+		<property name="maxActive" value="${jdbc.main.slave.maxActive}" />
+		<property name="maxIdle" value="${jdbc.main.slave.maxIdle}" />
+
+		<property name="maxWait" value="${jdbc.global.maxWait}" />
+		<property name="validationQuery" value="${jdbc.global.validationQuery}" />
+		<property name="timeBetweenEvictionRunsMillis" value="${jdbc.global.timeBetweenEvictionRunsMillis}" />
+		
+		<property name="testOnBorrow" value="true" />
+		<property name="testOnReturn" value="false" />
+		<property name="testWhileIdle" value="true" />
+	</bean>
+
+	<bean id="sqlSessionFactoryMaster" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSourceMaster" />
+		<property name="mapperLocations" value="classpath:com/sample/app/dao/**/mapper/*.xml" />
+		<property name="typeAliasesPackage" value="com.sample.app.**.domain" />
+	</bean>
+	<bean id="sqlSessionFactorySlave" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSourceSlave" />
+		<property name="mapperLocations" value="classpath:com/sample/app/dao/**/mapper/*.xml" />
+		<property name="typeAliasesPackage" value="com.sample.app.**.domain" />
+	</bean>
+	
+	<bean id="sqlSessionMaster" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactoryMaster" />
+	</bean>
+	<bean id="sqlSessionSlave" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactorySlave" />
+	</bean>
+	
+	<!-- Transaction -->
+	<!--
+	<bean id="txManagerMaster" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSourceMaster"/>
+ 	</bean>
+ 	<tx:advice id="txAdviceMaster" transaction-manager="txManagerMaster">
+ 		<tx:attributes>
+		<tx:method name="get*" read-only="true" rollback-for="Exception"/>
+		<tx:method name="*"/>
+ 		</tx:attributes>
+ 	</tx:advice>
+ 	-->
+</beans>
